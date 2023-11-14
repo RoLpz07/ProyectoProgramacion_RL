@@ -1,6 +1,7 @@
 #include<iostream>
 #include<fstream>
 #include<sstream>
+#include<vector>
 #define Archivo "movies.csv"
 using namespace std;
 struct Movies
@@ -12,16 +13,11 @@ struct Movies
 	string Director;
 	string Precio;
 	string Lanzamiento;
+	string NombreRentador;
+	string FechaRenta;
+	string Estado;
 }peliculas;
-struct Renta
-{
-	string nombre;
-	string apellido;
-	string rent_to;
-	string rent_on;
-	string status; 
-	
-};
+
 void Mostrar()
 {
 	ifstream file(Archivo);
@@ -40,6 +36,9 @@ void Mostrar()
         getline(stream, movie.Director, delimitador);
         getline(stream, movie.Precio, delimitador);
         getline(stream, movie.Lanzamiento, delimitador);
+        getline(stream, movie.NombreRentador, delimitador);
+        getline(stream, movie.FechaRenta, delimitador);
+        getline(stream, movie.Estado, delimitador);
 		
 		
 		cout<<"================================"<<endl;      
@@ -50,6 +49,9 @@ void Mostrar()
         cout<<"Director: "<<movie.Director<<endl;
         cout<<"Precio: "<<movie.Precio<<endl;
         cout<<"FechaLanzamiento: "<<movie.Lanzamiento<<endl;
+        cout<<"Rentada a: "<<movie.NombreRentador<<endl;
+        cout<<"Rentada el: "<<movie.FechaRenta<<endl;
+        cout<<"Estado: "<<movie.Estado<<endl;
         	
 	}
     file.close();
@@ -117,6 +119,52 @@ void create()
 
 
 
+	// Función para realizar consultas sobre el estado de renta de una película
+void Consult()
+{
+	{
+	ifstream file(Archivo);
+    string linea;
+    char delimitador = ';'  ; 
+	Movies movie;
+    getline(file,linea);
+    while (getline(file,linea))
+    {
+	    
+        stringstream stream(linea);
+        getline(stream, movie.Id, delimitador);
+        getline(stream, movie.NameMovie, delimitador);
+        getline(stream, movie.Genero, delimitador);
+        getline(stream, movie.Duracion, delimitador);
+        getline(stream, movie.Director, delimitador);
+        getline(stream, movie.Precio, delimitador);
+        getline(stream, movie.Lanzamiento, delimitador);
+        getline(stream, movie.NombreRentador, delimitador);
+        getline(stream, movie.FechaRenta, delimitador);
+        getline(stream, movie.Estado, delimitador);
+		
+		
+		cout<<"================================"<<endl;      
+	    cout<<"Nombre de la pelicula: "<<movie.NameMovie<<endl;
+        if (movie.Estado == "RENTADA") {
+            cout << "Estado: " << movie.Estado << " Por " << movie.NombreRentador << "." <<endl;
+        }
+		 else {
+            cout << "Estado: " << "DISPONIBLE" <<endl;
+        }	
+	}
+    file.close();
+
+}
+	
+}
+	
+
+
+
+
+
+
 int main()
 {
 	int y=1;
@@ -129,7 +177,8 @@ int main()
 			cout << "Menu" << endl;
 			cout << "(1) Mostrar peliculas" << endl;
 			cout << "(2) Agregar peliculas" << endl;
-			cout << "(3) NOs vemos "<< endl;
+			cout << "(3) Realizar consulta de estado de las peliculas"<<endl;
+			cout << "(4) Finalizar programa"<< endl;
 			
 		cin>>p;
 		switch(p)
@@ -142,6 +191,8 @@ int main()
 				break;
 			
 			case 3:
+				
+				Consult();
 				break;
 		}
 		
