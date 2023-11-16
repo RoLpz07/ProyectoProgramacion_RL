@@ -122,23 +122,30 @@ void create()
 	// Función para realizar consultas sobre el estado de renta de una película
 void Consult()
 {
-	char delimitador = ';';
-    string linea;
-    Movies movie;
-  ifstream archivo(Archivo, ios::in);
-    
+		int k;
+    	char delimitador = ';';
+    	Movies movie;
+		string linea;
+  		ifstream archivo(Archivo, ios::in);
+    	string num_buscar;
+    	string nombre_buscar;
+
+        cout<<"Como desea buscar la pelicula: (1)ID  (2)Nombre  "<<endl;
+        cin>>k;
         
-        string num_buscar;
-        
-        
+		if(k==1)
+		{
+			
+		cout<<"Ingrese id de la pelicula: "<<endl;
+		cin>>num_buscar;
         bool existe = false;
         getline(archivo,linea);
-		cout<<"Ingrese el ID del producto a mostar: ";
-		cin>>num_buscar;
         while (getline(archivo,linea))
         {
-             stringstream stream(linea);
-            getline(stream, movie.Id, delimitador);
+             
+            stringstream stream(linea);
+            
+	        getline(stream, movie.Id, delimitador);
 	        getline(stream, movie.NameMovie, delimitador);
 	        getline(stream, movie.Genero, delimitador);
 	        getline(stream, movie.Duracion, delimitador);
@@ -159,13 +166,54 @@ void Consult()
 		 	else {
             cout << "Estado: " << "DISPONIBLE" <<endl;
         	}
+               
+                
+           	 }
             
-        }
-        
-        
-    
-	}
+       	}
+       	 
+		}
+		else if(k==2)
+		{
+			cout<<"Ingrese nombre de la pelicula : "<<endl;
+			cin>>nombre_buscar;
+	        bool existe = false;
+	        getline(archivo,linea);
+	        while (getline(archivo,linea))
+	        {
+	             
+	            stringstream stream(linea);
+	            
+		        getline(stream, movie.Id, delimitador);
+		        getline(stream, movie.NameMovie, delimitador);
+		        getline(stream, movie.Genero, delimitador);
+		        getline(stream, movie.Duracion, delimitador);
+		        getline(stream, movie.Director, delimitador);
+		        getline(stream, movie.Precio, delimitador);
+		        getline(stream, movie.Lanzamiento, delimitador);
+		        getline(stream, movie.NombreRentador, delimitador);
+		        getline(stream, movie.FechaRenta, delimitador);
+		        getline(stream, movie.Estado, delimitador);
 	
+	            if(nombre_buscar.compare(movie.NameMovie) == 0){
+	            existe = true;
+	            cout<<"================================"<<endl;
+				cout<<"ID: "<<movie.Id<<endl;      
+		    	cout<<"Nombre de la pelicula: "<<movie.NameMovie<<endl;
+	        	if (movie.Estado == "RENTADA") {
+	            cout << "Estado: " << movie.Estado << " Por " << movie.NombreRentador << "." <<endl;
+	        	}
+			 	else {
+	            cout << "Estado: " << "DISPONIBLE" <<endl;
+	        	}
+	               
+	                
+	           	 }
+	            
+	       	}
+			
+			
+		}
         archivo.close();
 	}
 
