@@ -120,25 +120,26 @@ void create()
 
 
 	// Función para realizar consultas sobre el estado de renta de una película
-void Consult()
+void ConsultID()
 {
-		int k;
+		
     	char delimitador = ';';
     	Movies movie;
 		string linea;
   		ifstream archivo(Archivo, ios::in);
     	string num_buscar;
-    	string nombre_buscar;
+    	
 
-        cout<<"Como desea buscar la pelicula: (1)ID  (2)Nombre  "<<endl;
-        cin>>k;
+       
         
-		if(k==1)
-		{
+		
 			
 		cout<<"Ingrese id de la pelicula: "<<endl;
 		cin>>num_buscar;
-        bool existe = false;
+		
+        
+		
+		bool existe = false;
         getline(archivo,linea);
         while (getline(archivo,linea))
         {
@@ -171,52 +172,73 @@ void Consult()
            	 }
             
        	}
+		   
+       	
+       	archivo.close();
+		   }
+		   
+		   
        	 
-		}
-		else if(k==2)
-		{
-			cout<<"Ingrese nombre de la pelicula : "<<endl;
-			cin>>nombre_buscar;
-	        bool existe = false;
-	        getline(archivo,linea);
-	        while (getline(archivo,linea))
-	        {
-	             
-	            stringstream stream(linea);
-	            
-		        getline(stream, movie.Id, delimitador);
-		        getline(stream, movie.NameMovie, delimitador);
-		        getline(stream, movie.Genero, delimitador);
-		        getline(stream, movie.Duracion, delimitador);
-		        getline(stream, movie.Director, delimitador);
-		        getline(stream, movie.Precio, delimitador);
-		        getline(stream, movie.Lanzamiento, delimitador);
-		        getline(stream, movie.NombreRentador, delimitador);
-		        getline(stream, movie.FechaRenta, delimitador);
-		        getline(stream, movie.Estado, delimitador);
-	
-	            if(nombre_buscar.compare(movie.NameMovie) == 0){
-	            existe = true;
-	            cout<<"================================"<<endl;
-				cout<<"ID: "<<movie.Id<<endl;      
-		    	cout<<"Nombre de la pelicula: "<<movie.NameMovie<<endl;
-	        	if (movie.Estado == "RENTADA") {
-	            cout << "Estado: " << movie.Estado << " Por " << movie.NombreRentador << "." <<endl;
-	        	}
-			 	else {
-	            cout << "Estado: " << "DISPONIBLE" <<endl;
-	        	}
-	               
-	                
-	           	 }
-	            
-	       	}
-			
-			
-		}
-        archivo.close();
-	}
+void ConsultName()
+{
+	char delimitador = ';';
+    	Movies movie;
+		string linea;
+  		ifstream archivo(Archivo, ios::in);
+    	string nombre_buscar;
+    	
 
+       
+        
+		
+			
+		cout<<"Ingrese nombre de la pelicula: "<<endl;
+		cin>>nombre_buscar;
+		
+        
+		
+		bool existe = false;
+        getline(archivo,linea);
+        while (getline(archivo,linea))
+        {
+             
+            stringstream stream(linea);
+            
+	        getline(stream, movie.Id, delimitador);
+	        getline(stream, movie.NameMovie, delimitador);
+	        getline(stream, movie.Genero, delimitador);
+	        getline(stream, movie.Duracion, delimitador);
+	        getline(stream, movie.Director, delimitador);
+	        getline(stream, movie.Precio, delimitador);
+	        getline(stream, movie.Lanzamiento, delimitador);
+	        getline(stream, movie.NombreRentador, delimitador);
+	        getline(stream, movie.FechaRenta, delimitador);
+	        getline(stream, movie.Estado, delimitador);
+
+            if(nombre_buscar.compare(movie.NameMovie) == 0){
+                existe = true;
+            cout<<"================================"<<endl;
+			cout<<"ID: "<<movie.Id<<endl;      
+	    	cout<<"Nombre de la pelicula: "<<movie.NameMovie<<endl;
+        	if (movie.Estado == "RENTADA") {
+            cout << "Estado: " << movie.Estado << " Por " << movie.NombreRentador << "." <<endl;
+        	}
+		 	else {
+            cout << "Estado: " << "DISPONIBLE" <<endl;
+        	}
+               
+                
+           	 }
+            
+       	}
+		   
+       	
+       	archivo.close();
+		   }
+	
+	
+
+    
 
 int main()
 {
@@ -244,8 +266,23 @@ int main()
 				break;
 			
 			case 3:
+				int k;
+				cout<<"Como desea buscar la pelicula:  "<<endl;
+				cout<< "(1)ID "<<endl;
+				cout<< "(2)Nombre "<<endl;
 				
-				Consult();
+        		cin>>k;
+				
+				if(1==k)
+				{
+					ConsultID();
+				}
+				if(k==2)
+				{
+					ConsultName();
+					
+				}
+				
 				break;
 		}
 		
