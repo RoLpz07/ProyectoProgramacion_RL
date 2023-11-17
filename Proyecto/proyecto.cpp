@@ -193,7 +193,8 @@ void ConsultName()
 		
 			
 		cout<<"Ingrese nombre de la pelicula: "<<endl;
-		cin>>nombre_buscar;
+		cin.ignore();// esto elimina los espacios en blaco para que se pueda ejecutar bien el getline
+		getline(cin,nombre_buscar);// lee el nombre de la pelicula completo con espacios
 		
         
 		
@@ -229,6 +230,12 @@ void ConsultName()
                
                 
            	 }
+           	 else
+				{
+					cout<<"Esta pelicula no esta en la data "<<endl;
+           	 		break;
+				}
+           	 
             
        	}
 		   
@@ -242,11 +249,11 @@ void ConsultName()
 
 int main()
 {
-	int y=1;
-	while(y==1)
+	int k, p, y;
+	while(true)
 	{
 	
-		int p;
+		
 		
 		
 			cout << "Menu" << endl;
@@ -266,7 +273,7 @@ int main()
 				break;
 			
 			case 3:
-				int k;
+				
 				cout<<"Como desea buscar la pelicula:  "<<endl;
 				cout<< "(1)ID "<<endl;
 				cout<< "(2)Nombre "<<endl;
@@ -301,14 +308,14 @@ int main()
 			cout<<""<<endl;
 			cout<<"================================"<<endl;   
 			cout<<"Nos vemos "<<endl;
-			y=2;
+			exit(0);
 		}
 		else
 		{
 			cout<<""<<endl;
 			cout<<"================================"<<endl;   
 			cout<<"Opcion erronea, se cerrara el programa por defecto"<<endl;
-			y=2;	
+			exit(0);	
 		} 
 	}
 	
