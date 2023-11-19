@@ -1,7 +1,7 @@
 #include<iostream>
 #include<fstream>
 #include<sstream>
-#include<vector>
+#include <algorithm>
 #define Archivo "movies.csv"
 using namespace std;
 struct Movies
@@ -17,6 +17,23 @@ struct Movies
 	string FechaRenta;
 	string Estado;
 }peliculas;
+
+struct Pelicula {
+    int id;
+    string titulo;
+    string genero;
+    int duracion;
+    string director;
+    string fechaLanzamiento;
+    float precio;
+};
+
+
+struct Usuario {
+    string cedula;
+    string nombre;
+    string apellido;
+};
 
 void Mostrar()
 {
@@ -57,6 +74,159 @@ void Mostrar()
     file.close();
 
 }
+void leerArchivoCSV(const std::string& nombreArchivo, Pelicula*& original, int& tamano) {
+    std::ifstream archivo(nombreArchivo);
+    std::string linea;
+    std::getline(archivo, linea); // Ignorar la primera línea de encabezado
+
+    int i = 0;
+    while (std::getline(archivo, linea)) {
+        if (i >= tamano) {
+            // Si se alcanza el tamaño máximo, se duplica el tamaño del arreglo
+            int nuevoTamano = tamano * 2;
+            Pelicula* nuevasPeliculas = new Pelicula[nuevoTamano];
+
+            // Se copian las películas existentes al nuevo arreglo
+            for (int j = 0; j < tamano; j++) {
+                nuevasPeliculas[j] = original[j];
+            }
+
+            delete[] original;
+
+            original = nuevasPeliculas;
+            tamano = nuevoTamano;
+        }
+
+        std::istringstream ss(linea);
+        std::string campo;
+
+        std::getline(ss, campo, ';');
+        original[i].id = std::stoi(campo);
+
+        std::getline(ss, original[i].titulo, ';');
+
+        std::getline(ss, original[i].genero, ';');
+
+        std::getline(ss, campo, ';');
+        original[i].duracion = std::stoi(campo);
+
+        std::getline(ss, original[i].director, ';');
+
+        std::getline(ss, original[i].fechaLanzamiento, ';');
+
+        std::getline(ss, campo);
+        original[i].precio = std::stof(campo);
+
+        i++;
+    }
+
+    archivo.close();
+}
+void filtrarPorGenero(Pelicula* original, Pelicula* objetivo, int tamano, const std::string& genero) {
+    int contador = 0;
+    std::cout << std::endl;
+
+    for (int i = 0; i < tamano; i++) {
+        if (original[i].genero == "(no genres listed)") continue;
+        size_t encontrado = original[i].genero.find(genero);
+        if (encontrado != std::string::npos) {
+            objetivo[contador] = original[i];
+            contador++;
+            continue;
+        }
+    }
+}
+
+// Función para filtrar las películas por duración
+void filtrarPorDuracion(Pelicula* original, Pelicula* objetivo, int tamano, int duracionMinima, int duracionMaxima) {
+    int contador = 0;
+    for (int i = 0; i < tamano; i++) {
+        if (original[i].duracion >= duracionMinima && original[i].duracion <= duracionMaxima) {
+            objetivo[contador] = original[i];
+            contador++;
+        }
+    }
+}
+
+// Función para filtrar las películas por director
+void filtrarPorDirector(Pelicula* original, Pelicula* objetivo, int tamano, const std::string& director) {
+    int contador = 0;
+    for (int i = 0; i < tamano; i++) {
+        if (original[i].director == director) {
+            objetivo[contador] = original[i];
+            contador++;
+        }
+    }
+}
+
+// Función para filtrar las películas por fecha de lanzamiento
+void filtrarPorFechaLanzamiento(Pelicula* original, Pelicula* objetivo, int tamano, const std::string& fechaLanzamiento) {
+    int contador = 0;
+    for (int i = 0; i < tamano; i++) {
+        if (original[i].fechaLanzamiento < fechaLanzamiento) { 
+            objetivo[contador] = original[i];
+            contador++;
+        }
+    }
+}
+
+// Función para filtrar las películas por precio
+void filtrarPorPrecio(Pelicula* original, Pelicula* objetivo, int tamano, float precioMinimo, float precioMaximo) {
+    int contador = 0;
+    for (int i = 0; i < tamano; i++) {
+        if (original[i].precio >= precioMinimo && original[i].precio <= precioMaximo) {
+            objetivo[contador] = original[i];
+            contador++;
+        }
+    }
+}
+
+// Función para ordenar las películas por ID
+void ordenarPorID(Pelicula* original, int tamano) {
+    std::sort(original, original + tamano, [](const Pelicula& pelicula1, const Pelicula& pelicula2) {
+        return pelicula1.id < pelicula2.id; });
+}
+
+void ordenarPorDuracion(Pelicula* original, int tamano) {
+    std::sort(original, original + tamano, [](const Pelicula& pelicula1, const Pelicula& pelicula2) {
+        return pelicula1.duracion < pelicula2.duracion; });
+}
+void ordenarPorPrecio(Pelicula* original, int tamano) {
+    std::sort(original, original + tamano, [](const Pelicula& pelicula1, const Pelicula& pelicula2) {
+        return pelicula1.precio < pelicula2.precio; });
+}
+void ordenarPorFechaLanzamiento(Pelicula* original, int tamano) {
+    std::sort(original, original + tamano, [](const Pelicula& pelicula1, const Pelicula& pelicula2) {
+        return pelicula1.fechaLanzamiento < pelicula2.fechaLanzamiento; });
+}
+
+void crearUsuario(const std::string& archivo) {
+    Usuario usuario;
+
+    std::cout << "Ingrese la cedula: ";
+    std::cin >> usuario.cedula;
+
+    std::cout << "Ingrese el nombre: ";
+    std::cin >> usuario.nombre;
+
+    std::cout << "Ingrese el apellido: ";
+    std::cin >> usuario.apellido;
+
+    std::ofstream archivoCSV(archivo, std::ios::out);
+    archivoCSV << usuario.cedula << "," << usuario.nombre << "," << usuario.apellido << std::endl;
+    archivoCSV.close();
+}
+void imprimirPelicula(Pelicula pelicula) {
+    std::cout << "ID: " << pelicula.id << std::endl;
+    std::cout << "Titulo: " << pelicula.titulo << std::endl;
+    std::cout << "Genero: " << pelicula.genero << std::endl;
+    std::cout << "Duracion: " << pelicula.duracion << std::endl;
+    std::cout << "Director: " << pelicula.director << std::endl;
+    std::cout << "Precio: " << pelicula.precio << std::endl;
+    std::cout << "Fecha de lanzamiento: " << pelicula.fechaLanzamiento << std::endl;
+    std::cout << "-------------------------" << std::endl;
+}
+
 void create()
 {
     // file pointer
@@ -119,7 +289,7 @@ void create()
 
 
 
-	// Funci�n para realizar consultas sobre el estado de renta de una pel�cula
+	// Funci�n para realizar consultas sobre el estado de renta de una pel�cula
 void ConsultID()
 {
 		int contador;
@@ -256,13 +426,30 @@ void ConsultName()
        	archivo.close();
 		   }
 	
-	
-
-    
 
 int main()
 {
+	std::string nombreArchivo = "movies.csv";
+    int tamano = 1000;
+    std::string archivo = "Users.csv";
+
+    //Tamaño del arreglo de películas 
+    Pelicula* original = new Pelicula[tamano];
+    Pelicula* filtradas = new Pelicula[tamano];
+
+	int filtrador;
+    int orden;
+
+        std::string genero;
+        std::string director;
+        std::string fechaLanzamiento;
+		int i;
+        float duracionMinima;
+        float duracionMaxima;
+        float precioMinimo;
+        float precioMaximo;
 	int k, p, y;
+	leerArchivoCSV(Archivo, original, tamano);
 	while(true)
 	{
 	
@@ -273,8 +460,10 @@ int main()
 			cout << "(1) Mostrar peliculas" << endl;
 			cout << "(2) Agregar peliculas" << endl;
 			cout << "(3) Realizar consulta de estado de las peliculas"<<endl;
-			cout << "(4) Finalizar programa"<< endl;
-			
+			cout << "(4) Filtrar y ordenar las peliculas"<< endl;
+			cout << "(5) Crear usuario"<< endl;
+			cout << "(6) finalizar programa"<< endl;
+
 		cin>>p;
 		switch(p)
 		{
@@ -305,38 +494,123 @@ int main()
 				
 				break;
 				
-				case 4:
-					exit(0);
+			case 4:
+				
+				cout << "1. Filtrar por genero\n";
+				cout << "2. Filtrar por duración\n";
+				cout << "3. Filtrar por director\n";
+				cout << "4. Filtrar por fecha de lanzamiento\n";
+				cout << "5. Filtrar por precio\n";
+				cin >> filtrador;
+
+				cout << "1. Ordenar por precio\n";
+				cout << "2. Ordenar por duracion\n";
+				cout << "3. Ordenar por fecha de lanzamiento\n";
+				cout << "4. Ordenar por ID\n";
+				cin >> orden;
+
+				switch (filtrador)
+				{
+				case 1:
+					// Filtrar por género
+					cout << "Ingrese el genero: ";
+					cin >> genero;
+					filtrarPorGenero(original, filtradas, tamano, genero);
 					break;
+				case 2:
+					// Filtrar por duración
+					cout << "Ingrese la duracion minima: ";
+					cin >> duracionMinima;
+					cout << "Ingrese la duracion maxima: ";
+					cin >> duracionMaxima;
+					filtrarPorDuracion(original, filtradas, tamano, duracionMinima, duracionMaxima);
+					break;
+				case 3:
+					// Filtrar por dir
+					cout << "Ingrese el director: ";
+					cin >> director;
+					filtrarPorDirector(original, filtradas, tamano, director);
+					break;
+				case 4:
+					// Filtrar por fecha de lanzamiento
+					cout << "Ingrese la fecha de lanzamiento (YYYY-MM-DD): ";
+					cin >> fechaLanzamiento;
+					filtrarPorFechaLanzamiento(original, filtradas, tamano, fechaLanzamiento);
+					break;
+				case 5:
+					// Filtrar por precio
+					cout << "Ingrese el precio minimo: ";
+					cin >> precioMinimo;
+					cout << "Ingrese el precio maximo: ";
+					cin >> precioMaximo;
+					filtrarPorPrecio(original, filtradas, tamano, precioMinimo, precioMaximo);
+					break;
+				default:
+					break;
+				}
+				switch (orden)
+				{
+				case 1:
+					// Ordenar por precio
+					ordenarPorPrecio(filtradas, tamano);
+					break;
+				case 2:
+					// Ordenar por duración
+					ordenarPorDuracion(filtradas, tamano);
+					break;
+				case 3:
+					// Ordenar por fecha de lanzamiento
+					ordenarPorFechaLanzamiento(filtradas, tamano);
+					break;
+				case 4:
+					// Ordenar por ID
+					ordenarPorID(filtradas, tamano);
+					break;
+				default:
+					break;
+					
+				}
+				// Imprimir las películas filtradas y ordenadas
+				for (i = 0; i < tamano; i++) {
+					if (filtradas[i].id == 0) continue;
+					imprimirPelicula(filtradas[i]);
+				}
+				break;
+			case 5:
+				crearUsuario(archivo);
+				break;
+			case 6:
+				cout<<""<<endl;
+				cout<<"================================"<<endl;   
+				cout<<"quieres seguir en el programa? "<<endl;cout<<"(1)Si "<<endl;cout<<"(2)No "<<endl;cin>>y;
+				if(y==1)
+				{
+					cout<<""<<endl;
+					cout<<"Genial... Sigamos XD"<<endl;
+					cout<<"================================"<<endl;   
+					
+				}
+				else if(y==2)
+				{
+					cout<<""<<endl;
+					cout<<"================================"<<endl;   
+					cout<<"Nos vemos "<<endl;
+					exit(0);
+				}
+				else
+				{
+					cout<<""<<endl;
+					cout<<"================================"<<endl;   
+					cout<<"Opcion erronea, se cerrara el programa por defecto"<<endl;
+					exit(0);	
+				} 
+				break;
+			default:
+				break;
+			}
 		}
-		
-		cout<<""<<endl;
-		cout<<"================================"<<endl;   
-		cout<<"quieres seguir en el programa? "<<endl;cout<<"(1)Si "<<endl;cout<<"(2)No "<<endl;cin>>y;
-		if(y==1)
-		{
-			cout<<""<<endl;
-			cout<<"Genial... Sigamos XD"<<endl;
-			cout<<"================================"<<endl;   
-			
-		}
-		else if(y==2)
-		{
-			cout<<""<<endl;
-			cout<<"================================"<<endl;   
-			cout<<"Nos vemos "<<endl;
-			exit(0);
-		}
-		else
-		{
-			cout<<""<<endl;
-			cout<<"================================"<<endl;   
-			cout<<"Opcion erronea, se cerrara el programa por defecto"<<endl;
-			exit(0);	
-		} 
-	}
 	
+	system("pause");
 	return 0;
-	
-} 
+}
 
