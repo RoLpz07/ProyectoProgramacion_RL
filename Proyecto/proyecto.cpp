@@ -217,8 +217,38 @@ void crearUsuario(const std::string& archivo) {
 	std::cin >> usuario.telefono;
 
     std::ofstream archivoCSV(archivo, std::ios::out);
-    archivoCSV << usuario.cedula << "," << usuario.nombre << "," << usuario.apellido << std::endl;
+    archivoCSV << usuario.cedula << "," << usuario.nombre << "," << usuario.apellido << "," << usuario.telefono << std::endl;
     archivoCSV.close();
+}
+void borrarCuentaPorCedula(const std::string& archivo) {
+    std::string cedula;
+
+    // Solicita la cédula al usuario
+    std::cout << "Ingrese la cedula del usuario que desea eliminar: ";
+    std::cin >> cedula;
+
+    std::ifstream inputFile(archivo);
+    std::ofstream outputFile("temp.csv");
+
+    // Lee cada línea del archivo
+    std::string linea;
+    while (std::getline(inputFile, linea)) {
+        std::istringstream iss(linea);
+        std::string cedulaUsuario;
+        std::getline(iss, cedulaUsuario, ',');
+
+        // Si la cédula del usuario es diferente a la cédula especificada, escribe la línea en el archivo temporal
+        if (cedulaUsuario != cedula) {
+            outputFile << linea << std::endl;
+        }
+    }
+
+    inputFile.close();
+    outputFile.close();
+
+    // Reemplaza el archivo original con el archivo temporal
+    std::remove(archivo.c_str());
+    std::rename("temp.csv", archivo.c_str());
 }
 void imprimirPelicula(Pelicula pelicula) {
     std::cout << "ID: " << pelicula.id << std::endl;
@@ -490,7 +520,8 @@ int main()
 			cout << "(4) Filtrar y ordenar las peliculas"<< endl;
 			cout << "(5) Crear usuario"<< endl;
 			cout << "(6) Eliminar pelicula"<< endl;
-			cout << "(7) finalizar programa"<< endl;
+			cout << "(7) Eliminar usuario"<< endl;
+			cout << "(8) finalizar programa"<< endl;
 
 		cin>>p;
 		switch(p)
@@ -614,6 +645,10 @@ int main()
   				  borrarPeliculaPorID(nombreArchivo,idPelicula);
 				break;
 			case 7:
+				borrarCuentaPorCedula("users.csv");
+		
+				break;
+			case 8:
 				cout<<""<<endl;
 				cout<<"================================"<<endl;   
 				cout<<"quieres seguir en el programa? "<<endl;cout<<"(1)Si "<<endl;cout<<"(2)No "<<endl;cin>>y;
