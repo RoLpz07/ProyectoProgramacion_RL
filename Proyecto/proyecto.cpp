@@ -30,6 +30,7 @@ struct Pelicula {
 
 
 struct Usuario {
+	string id;
     string cedula;
     string nombre;
     string apellido;
@@ -202,7 +203,11 @@ void ordenarPorFechaLanzamiento(Pelicula* original, int tamano) {
 }
 
 void crearUsuario(const std::string& archivo) {
+    static int ultimoID = 0; // Variable estática para almacenar el último ID asignado
     Usuario usuario;
+
+    // Incrementa el ID y asigna al usuario
+    usuario.id = ++ultimoID;
 
     std::cout << "Ingrese la cedula: ";
     std::cin >> usuario.cedula;
@@ -213,11 +218,11 @@ void crearUsuario(const std::string& archivo) {
     std::cout << "Ingrese el apellido: ";
     std::cin >> usuario.apellido;
 
-	std::cout << "Ingrese el telefono: ";
-	std::cin >> usuario.telefono;
+    std::cout << "Ingrese el telefono: ";
+    std::cin >> usuario.telefono;
 
-    std::ofstream archivoCSV(archivo, std::ios::out);
-    archivoCSV << usuario.cedula << "," << usuario.nombre << "," << usuario.apellido << "," << usuario.telefono << std::endl;
+    std::ofstream archivoCSV(archivo, std::ios::app); // Usa std::ios::app para agregar al final del archivo
+    archivoCSV << usuario.id << "," << usuario.cedula << "," << usuario.nombre << "," << usuario.apellido << "," << usuario.telefono << std::endl;
     archivoCSV.close();
 }
 void borrarCuentaPorCedula(const std::string& archivo) {
