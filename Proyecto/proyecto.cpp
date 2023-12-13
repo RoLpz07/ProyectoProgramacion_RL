@@ -203,7 +203,7 @@ void ordenarPorFechaLanzamiento(Pelicula* original, int tamano) {
 }
 
 void crearUsuario(const std::string& archivo) {
-    static int ultimoID = 0; // Variable estática para almacenar el último ID asignado
+    static int ultimoID = 1; // Variable estática para almacenar el último ID asignado
     Usuario usuario;
 
     // Incrementa el ID y asigna al usuario
@@ -222,8 +222,21 @@ void crearUsuario(const std::string& archivo) {
     std::cin >> usuario.telefono;
 
     std::ofstream archivoCSV(archivo, std::ios::app); // Usa std::ios::app para agregar al final del archivo
-    archivoCSV << usuario.id << "," << usuario.cedula << "," << usuario.nombre << "," << usuario.apellido << "," << usuario.telefono << std::endl;
+    archivoCSV << ultimoID << "," << usuario.cedula << "," << usuario.nombre << "," << usuario.apellido << "," << usuario.telefono << std::endl;
     archivoCSV.close();
+}
+void mostrarUsuarios(const std::string& archivo, const std::string& opcionBusqueda, const std::string& valorBusqueda) {
+    std::ifstream inputFile(archivo);
+    std::string linea;
+
+    // Lee cada línea del archivo y muestra la línea completa si coincide con el criterio de búsqueda y el valor de búsqueda
+    while (std::getline(inputFile, linea)) {
+        if (linea.find(valorBusqueda) != std::string::npos) {
+            std::cout << linea << std::endl;
+        }
+    }
+
+    inputFile.close();
 }
 void borrarCuentaPorCedula(const std::string& archivo) {
     std::string cedula;
@@ -403,10 +416,6 @@ void ConsultName()
   		ifstream archivo(Archivo, ios::in);
     	string nombre_buscar;
     	
-
-       
-        
-		
 			
 		cout<<"Ingrese nombre de la pelicula: "<<endl;
 		cin.ignore();// esto elimina los espacios en blaco para que se pueda ejecutar bien el getline
@@ -453,8 +462,7 @@ void ConsultName()
 				contador=1;
 			
 				}
-           	 
-            
+           	  
        	}
        	
 		if(contador==1 && existe==false)
@@ -494,11 +502,10 @@ int main()
 	std::string nombreArchivo = "movies.csv";
     int tamano = 1000;
     std::string archivo = "Users.csv";
-
+	std::string valorBusqueda;
     //Tamaño del arreglo de películas 
     Pelicula* original = new Pelicula[tamano];
-    Pelicula* filtradas = new Pelicula[tamano];
-
+    Pelicula* filtradas = new Pelicula[tamano];;
 	int filtrador;
     int orden;
 		std::string idPelicula;
@@ -511,12 +518,11 @@ int main()
         float precioMinimo;
         float precioMaximo;
 	int k, p, y;
+	int v;
+
 	leerArchivoCSV(Archivo, original, tamano);
 	while(true)
-	{
-	
-		
-		
+	{	
 		
 			cout << "Menu" << endl;
 			cout << "(1) Mostrar peliculas" << endl;
@@ -526,7 +532,9 @@ int main()
 			cout << "(5) Crear usuario"<< endl;
 			cout << "(6) Eliminar pelicula"<< endl;
 			cout << "(7) Eliminar usuario"<< endl;
-			cout << "(8) finalizar programa"<< endl;
+			cout << "(8) Buscar usuarios"<< endl;
+			cout << "(9) finalizar programa"<< endl;
+			
 
 		cin>>p;
 		switch(p)
@@ -651,9 +659,35 @@ int main()
 				break;
 			case 7:
 				borrarCuentaPorCedula("users.csv");
-		
+			
 				break;
 			case 8:
+				cout<<"Desea buscar cliente por id(1), nombre(2), cedula(3) o telefono(4)?"<<endl;
+				cin>>v;
+				switch (v) {
+				case 1:
+					cout << "Ingrese el ID a buscar: ";
+					cin >> valorBusqueda;
+					mostrarUsuarios(archivo, "id", valorBusqueda); // Muestra los usuarios cuyo ID coincide con el valor de búsqueda
+					break;
+				case 2:
+					cout << "Ingrese el nombre a buscar: ";
+					cin >> valorBusqueda;
+					mostrarUsuarios(archivo, "nombre", valorBusqueda); // Muestra los usuarios cuyo nombre coincide con el valor de búsqueda
+					break;
+				case 3:
+					cout << "Ingrese la cedula a buscar: ";
+					cin >> valorBusqueda;
+					mostrarUsuarios(archivo, "cedula", valorBusqueda); // Muestra los usuarios cuya cédula coincide con el valor de búsqueda
+					break;
+				case 4:
+					cout << "Ingrese el teléfono a buscar: ";
+					cin >> valorBusqueda;
+					mostrarUsuarios(archivo, "telefono", valorBusqueda); // Muestra los usuarios cuyo teléfono coincide con el valor de búsqueda
+					break;
+			}
+				break;
+			case 9:
 				cout<<""<<endl;
 				cout<<"================================"<<endl;   
 				cout<<"quieres seguir en el programa? "<<endl;cout<<"(1)Si "<<endl;cout<<"(2)No "<<endl;cin>>y;
